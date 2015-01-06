@@ -2,11 +2,10 @@
 
 : ${MAIL_SERVER=$MAIL_PORT_25_TCP_ADDR}
 
-if [ -z "${MAIL_SERVER_HOSTNAME}" ];then
-    MAIL_SERVER_HOSTNAME=`hostname`
-fi
-
 sed -i "s/relayhost =.*/relayhost = ${MAIL_SERVER}/" /etc/postfix/main.cf
-sed -i "s/myhostname =.*/myhostname = ${MAIL_SERVER_HOSTNAME}/" /etc/postfix/main.cf
+sed -i "s/myhostname =.*/myhostname = ${HOSTNAME}/" /etc/postfix/main.cf
 
-exec /usr/lib/postfix/master -d -c /etc/postfix
+/usr/sbin/rsyslogd
+service postfix start
+
+exec tail -F /var/log/mail.log
